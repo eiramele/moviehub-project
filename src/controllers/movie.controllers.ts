@@ -1,10 +1,24 @@
 import { Request, Response } from "express";
 import MovieModel from "../models/movie.model";
 import UserModel from "../models/user.model";
+import GenreModel from "../models/genre.model";
 
 export const createMovie = async (req: Request, res: Response) => {
   const { film_name, image, genre, release_year } = req.body;
   const { userId } = req.params;
+
+  if (!film_name) {
+    return res.status(400).send({ message: "Film name is required" });
+  }
+  if (!image) {
+    return res.status(400).send({ message: "Image is required" });
+  }
+  if (!genre) {
+    return res.status(400).send({ message: "Genre is required" });
+  }
+  if (!release_year) {
+    return res.status(400).send({ message: "Release year is required" });
+  }
 
   try {
     const movie = await MovieModel.create({
@@ -13,6 +27,7 @@ export const createMovie = async (req: Request, res: Response) => {
       genre,
       release_year,
     });
+
     await UserModel.findByIdAndUpdate(
       { _id: userId },
       { $push: { movies: movie._id } }
@@ -25,7 +40,10 @@ export const createMovie = async (req: Request, res: Response) => {
 
 export const getAllMovies = async (req: Request, res: Response) => {
   try {
-    const allMovies = await MovieModel.find();
+    const allMovies = await MovieModel.find().populate({
+      path: "genre",
+      select: "name",
+    });
     res.status(201).send(allMovies);
   } catch (error) {
     res.status(400).send(error);
@@ -56,7 +74,7 @@ export const updateMovie = async (req: Request, res: Response) => {
       { _id: movieId },
       { film_name, image, genre, release_year },
       { new: true }
-    );
+    ).populate("genre");
     res.status(201).send(movieUpdated);
   } catch (error) {
     res.status(400).send(error);
@@ -72,5 +90,3 @@ export const deleteMovie = async (req: Request, res: Response) => {
     res.status(400).send(error);
   }
 };
-
-

@@ -19,10 +19,12 @@ const movieSchema = new Schema<IMovieSchema>(
       type: String,
       required: true,
     },
-    genre: {
-      type: Number,
-      required: true,
-    },
+    genre: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Genre",
+      },
+    ],
     release_year: {
       type: Number,
       required: true,
