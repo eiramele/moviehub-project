@@ -1,7 +1,16 @@
 import { Request, Response } from "express";
-import MovieModel from "../models/movie.model";
-import UserModel from "../models/user.model";
-import GenreModel from "../models/genre.model";
+import prisma from "../db/client";
+
+export const getAllMovies = async (req: Request, res: Response) => {
+  try {
+    const allMovies = await prisma.movies.findMany({
+      include: { genre: true },
+    });
+    res.status(201).send(allMovies);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
 
 export const createMovie = async (req: Request, res: Response) => {
   const { film_name, image, genre, release_year } = req.body;
@@ -21,30 +30,16 @@ export const createMovie = async (req: Request, res: Response) => {
   }
 
   try {
-    const movie = await MovieModel.create({
-      film_name,
-      image,
-      genre,
-      release_year,
+    const movie = await prisma.movies.create({
+      data: {
+        film_name,
+        image,
+        genre: { connect: { id: genre } },
+        release_year,
+        user: { connect: { id: userId } },
+      },
     });
-
-    await UserModel.findByIdAndUpdate(
-      { _id: userId },
-      { $push: { movies: movie._id } }
-    );
     res.status(201).send(movie);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
-
-export const getAllMovies = async (req: Request, res: Response) => {
-  try {
-    const allMovies = await MovieModel.find().populate({
-      path: "genre",
-      select: "name",
-    });
-    res.status(201).send(allMovies);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -70,11 +65,15 @@ export const updateMovie = async (req: Request, res: Response) => {
   }
 
   try {
-    const movieUpdated = await MovieModel.findByIdAndUpdate(
-      { _id: movieId },
-      { film_name, image, genre, release_year },
-      { new: true }
-    ).populate("genre");
+    const movieUpdated = await prisma.movies.update({
+      where: { id: movieId },
+      data: {
+        film_name,
+        image,
+        genre: { connect: { id: genre } },
+        release_year,
+      },
+    });
     res.status(201).send(movieUpdated);
   } catch (error) {
     res.status(400).send(error);
@@ -84,7 +83,7 @@ export const updateMovie = async (req: Request, res: Response) => {
 export const deleteMovie = async (req: Request, res: Response) => {
   const { movieId } = req.params;
   try {
-    const movieDeleted = await MovieModel.findOneAndDelete({ _id: movieId });
+    const movieDeleted = await prisma.movies.delete({ where: { id: movieId } });
     res.status(201).send(movieDeleted);
   } catch (error) {
     res.status(400).send(error);

@@ -1,11 +1,11 @@
 import app from "./server";
 import config from "./config/config";
-import connect from "./db/db";
+import prisma from "./db/client";
 
 const PORT = config.app.PORT;
 
-connect().then(()=>{
-    app. listen(PORT, ()=>console.log(`Server is running on port ${PORT} and is connected to database`))
-})
-
-
+app.listen(PORT, async () => {
+  console.log(`Server is running on port ${PORT}`);
+  await prisma.$connect();
+  console.log("Prisma connected");
+});
