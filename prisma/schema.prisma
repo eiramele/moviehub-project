@@ -38,7 +38,9 @@ model Movies {
 }
 
 model Genre {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  name   String   
-  movies Movies[]
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  movies   Movies[]
 }
