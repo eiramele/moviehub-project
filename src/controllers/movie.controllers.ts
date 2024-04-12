@@ -20,56 +20,51 @@ export const createMovie = async (req: Request, res: Response) => {
   const { film_name, image, genres, release_year } = req.body;
   const userId = parseInt(req.params.userId);
 
-  if (!film_name) {
-    return res.status(400).send({ message: "Film name is required" });
-  }
-  if (!image) {
-    return res.status(400).send({ message: "Image is required" });
-  }
-
-  if (!release_year) {
-    return res.status(400).send({ message: "Release year is required" });
-  }
-
-  try {
-    const movie = await prisma.$transaction(async (prisma) => {
-      const newMovie = await prisma.movies.create({
-        data: {
-          film_name,
-          image,
-          userId,
-          release_year,
-        },
-      });
-
-      if (genres && genres.length) {
-        const createGenres = genres.map((genreId: number) => ({
-          movieId: newMovie.id,
-          genreId: genreId,
-        }));
-
-        await prisma.movieGenre.createMany({
-          data: createGenres,
+  if (!film_name || !image || !release_year) {
+    return res
+      .status(400)
+      .send({ message: "Film name, image and release year are required" });
+  } else {
+    try {
+      const movie = await prisma.$transaction(async (prisma) => {
+        const newMovie = await prisma.movies.create({
+          data: {
+            film_name,
+            image,
+            userId,
+            release_year,
+          },
         });
-      }
 
-      return prisma.movies.findUnique({
-        where: {
-          id: newMovie.id,
-        },
-        include: {
-          genre: true,
-        },
+        if (genres && genres.length) {
+          const createGenres = genres.map((genreId: number) => ({
+            movieId: newMovie.id,
+            genreId: genreId,
+          }));
+
+          await prisma.movieGenre.createMany({
+            data: createGenres,
+          });
+        }
+
+        return prisma.movies.findUnique({
+          where: {
+            id: newMovie.id,
+          },
+          include: {
+            genre: true,
+          },
+        });
       });
-    });
 
-    res.status(201).send({
-      msg: "Movie created successfully",
-      data: movie,
-      typeof: typeof movie,
-    });
-  } catch (error) {
-    res.status(400).send(error);
+      res.status(201).send({
+        msg: "Movie created successfully",
+        data: movie,
+        typeof: typeof movie,
+      });
+    } catch (error) {
+      res.status(400).send(error);
+    }
   }
 };
 

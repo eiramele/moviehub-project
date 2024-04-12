@@ -20,18 +20,19 @@ export const createGenre = async (req: Request, res: Response) => {
 
   if (!name) {
     res.status(400).send({ message: "Name is required" });
-  }
-  try {
-    const genre = await prisma.genre.create({
-      data: { name },
-    });
-    res.status(201).send({
-      type: typeof genre,
-      msg: "Genre created successfully",
-      data: genre,
-    });
-  } catch (error) {
-    res.status(400).send(error);
+  } else {
+    try {
+      const genre = await prisma.genre.create({
+        data: { name },
+      });
+      res.status(201).send({
+        type: typeof genre,
+        msg: "Genre created successfully",
+        data: genre,
+      });
+    } catch (error) {
+      res.status(400).send(error);
+    }
   }
 };
 
@@ -41,20 +42,20 @@ export const updateGenre = async (req: Request, res: Response) => {
 
   if (!name) {
     return res.status(400).send({ message: "No update fields provided." });
-  }
-
-  try {
-    const genreUpdated = await prisma.genre.update({
-      where: { id: genreId },
-      data: { name },
-    });
-    res.status(201).send({
-      type: typeof genreUpdated,
-      msg: "Genre updated successfully",
-      data: genreUpdated,
-    });
-  } catch (error) {
-    res.status(400).send(error);
+  } else {
+    try {
+      const genreUpdated = await prisma.genre.update({
+        where: { id: genreId },
+        data: { name },
+      });
+      res.status(201).send({
+        type: typeof genreUpdated,
+        msg: "Genre updated successfully",
+        data: genreUpdated,
+      });
+    } catch (error) {
+      res.status(400).send(error);
+    }
   }
 };
 
