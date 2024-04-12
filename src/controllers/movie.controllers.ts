@@ -52,12 +52,12 @@ export const updateMovie = async (req: Request, res: Response) => {
   const updateData: {
     film_name?: string;
     image?: string;
-    genre?: string;
+    genre?: { connect: { id: string } };
     release_year?: number;
   } = {};
   if (film_name) updateData.film_name = film_name;
   if (image) updateData.image = image;
-  if (genre) updateData.genre = genre;
+  if (genre) updateData.genre = { connect: { id: genre } };
   if (release_year) updateData.release_year = release_year;
 
   if (Object.keys(updateData).length === 0) {
@@ -67,12 +67,7 @@ export const updateMovie = async (req: Request, res: Response) => {
   try {
     const movieUpdated = await prisma.movies.update({
       where: { id: movieId },
-      data: {
-        film_name,
-        image,
-        genre: { connect: { id: genre } },
-        release_year,
-      },
+      data: updateData,
     });
     res.status(201).send(movieUpdated);
   } catch (error) {
