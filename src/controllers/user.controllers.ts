@@ -7,7 +7,11 @@ export const getAllUsers = async (req: Request, res: Response) => {
     const allUsers = await prisma.user.findMany({
       include: { movies: true },
     });
-    res.status(200).send(allUsers);
+    res.status(200).send({
+      type: typeof allUsers,
+      msg: "All users shown",
+      data: allUsers,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -30,7 +34,11 @@ export const createUser = async (req: Request, res: Response) => {
     const newUser = await prisma.user.create({
       data: { name, email, password },
     });
-    res.status(201).send(newUser);
+    res.status(201).send({
+      type: typeof newUser,
+      msg: "User created successfully",
+      data: newUser,
+    });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -38,7 +46,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
-  const { userId } = req.params;
+  const userId = parseInt(req.params.userId);
 
   const updateData: { name?: string; email?: string; password?: string } = {};
   if (name) updateData.name = name;
@@ -54,7 +62,11 @@ export const updateUser = async (req: Request, res: Response) => {
       where: { id: userId },
       data: { name, email, password },
     });
-    res.status(201).send(userUpdated);
+    res.status(201).send({
+      type: typeof userUpdated,
+      msg: "User updated successfully",
+      data: userUpdated,
+    });
   } catch (error) {
     res.status(400).send(error);
     console.log(error);
@@ -62,10 +74,14 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
-  const { userId } = req.params;
+  const userId = parseInt(req.params.userId);
   try {
     const userDeleted = await prisma.user.delete({ where: { id: userId } });
-    res.status(200).send(userDeleted);
+    res.status(200).send({
+      type: typeof userDeleted,
+      msg: "User delated successfully",
+      data: userDeleted,
+    });
   } catch (error) {
     res.status(400).send(error);
   }

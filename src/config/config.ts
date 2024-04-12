@@ -31,7 +31,7 @@ const CONFIG: TConfig = {
       PORT: process.env.PORT || 4001,
     },
     db: {
-      URI: process.env.DATABASE_URL || "mongodb://localhost:27017"
+      URI: process.env.DATABASE_URL || "postgresql://localhost:27017"
     }
   },
   production: {
@@ -39,7 +39,7 @@ const CONFIG: TConfig = {
       PORT: process.env.PORT || 8081,
     },
     db: {
-      URI: process.env.DATABASE_URL || "mongodb://localhost:27017"
+      URI: process.env.DATABASE_URL || "postgresql://localhost:27017"
     }
   },
 };
