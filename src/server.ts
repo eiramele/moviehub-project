@@ -5,14 +5,20 @@ import userRouter from "./routes/user.routes";
 import movieRoutes from "./routes/movies.routes";
 import genreRoutes from "./routes/genres.routes";
 
+const cors = require('cors')
 const app = express();
 
 app.use(helmet());
 app.use(morgan("tiny"));
-
 app.use(express.json());
-app.use("/user", userRouter);
-app.use("/movie", movieRoutes);
-app.use("/genre", genreRoutes);
+app.use(cors())
+app.use(
+    cors({
+      origin: process.env.APP_ORIGIN,
+    })
+  );
+app.use("/api/user", userRouter);
+app.use("/api/movie", movieRoutes);
+app.use("api/genre", genreRoutes);
 
 export default app;
