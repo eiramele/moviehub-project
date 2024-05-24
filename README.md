@@ -1,4 +1,4 @@
-# Movie hub project (backend project)
+# Movie hub project (backend)
 
 This project is a Node.js and Express application that provides an API to interact with a movie database. The API supports multiple database configurations using Mongoose with MongoDB, Mongo and Prisma, and Prisma with PostgreSQL.
 
