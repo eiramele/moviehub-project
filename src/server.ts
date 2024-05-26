@@ -19,6 +19,6 @@ app.use(
   );
 app.use("/api/user", userRouter);
 app.use("/api/movie", movieRoutes);
-app.use("api/genre", genreRoutes);
+app.use("/api/genre", genreRoutes);
 
 export default app;
