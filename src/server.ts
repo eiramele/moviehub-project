@@ -4,6 +4,7 @@ import helmet from "helmet";
 import userRouter from "./routes/user.routes";
 import movieRoutes from "./routes/movies.routes";
 import genreRoutes from "./routes/genres.routes";
+import searchRouter from "./routes/search.routes";
 
 const cors = require('cors')
 const app = express();
@@ -20,5 +21,6 @@ app.use(
 app.use("/api/user", userRouter);
 app.use("/api/movie", movieRoutes);
 app.use("/api/genre", genreRoutes);
+app.use("/api/search", searchRouter);
 
 export default app;
