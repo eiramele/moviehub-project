@@ -28,6 +28,9 @@ For Mongo with Prisma:
 For PostgreSQL with Prisma:
 ```git switch prisma+postgresql```
 
+For PostgreSQL with Prisma to connect to Front-end:
+```git switch advanced```
+
 ## Api endpoints
 The API supports several endpoints for managing movies. You can find them on Routes folder
   
